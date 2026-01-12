@@ -1,15 +1,20 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
+import morgan from "morgan";
 import { errorHandler } from "./middlewares/errorHandler";
 import { AppError } from "./utils/AppError";
 import apiRoutes from "./routes/api";
+import { env } from "./config/env";
 
 const app: Application = express();
 
 // Global Middlewares
 app.use(helmet());
 app.use(cors());
+if (env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 app.use(express.json());
 
 // Health Check
