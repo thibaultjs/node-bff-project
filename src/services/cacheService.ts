@@ -1,4 +1,4 @@
-import NodeCache from 'node-cache';
+import NodeCache from "node-cache";
 
 class CacheService {
   private cache: NodeCache;

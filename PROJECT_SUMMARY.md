@@ -54,14 +54,14 @@ Transformation du code "qui marche" en code "sécurisé et maintenable".
 Optimisation pour la production et le fort trafic.
 
 - **Rate Limiting** :
-    - Protection de l'API contre les abus (DDoS, Bruteforce) avec `express-rate-limit`.
-    - Configuration : Max 100 requêtes / 15min par IP.
+  - Protection de l'API contre les abus (DDoS, Bruteforce) avec `express-rate-limit`.
+  - Configuration : Max 100 requêtes / 15min par IP.
 - **Strategie de Cache (Cache-Aside Pattern)** :
-    - Implémentation d'un Service de Cache (simulant Redis avec `node-cache`).
-    - Logique du contrôleur :
-      1.  Check Cache (`get`). Si présent -> return immédiat (< 10ms).
-      2.  Si absent -> `Promise.all` des services -> Stockage Cache (`set` avec TTL 60s) -> return.
-    - Résultat : Réduction drastique de la latence et protection des APIs tierces (Weather/Traffic) contre la surcharge.
+  - Implémentation d'un Service de Cache (simulant Redis avec `node-cache`).
+  - Logique du contrôleur :
+    1.  Check Cache (`get`). Si présent -> return immédiat (< 10ms).
+    2.  Si absent -> `Promise.all` des services -> Stockage Cache (`set` avec TTL 60s) -> return.
+  - Résultat : Réduction drastique de la latence et protection des APIs tierces (Weather/Traffic) contre la surcharge.
 
 ---
 
@@ -97,4 +97,3 @@ src/
 1.  **Jour 5 : Tests & Qualité**
     - Tests Unitaires (Jest).
     - Tests d'Intégration (Supertest).
-

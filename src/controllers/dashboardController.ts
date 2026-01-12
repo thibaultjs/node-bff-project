@@ -25,8 +25,8 @@ export const getDashboardData = async (
     if (cachedData) {
       // Si trouvé en cache, on retourne la réponse tout de suite (0ms de latence API tierce)
       res.status(200).json({
-        ...cachedData as object,
-        _metadata: { cached: true, timestamp: new Date().toISOString() } // Petit flag pour debug
+        ...(cachedData as object),
+        _metadata: { cached: true, timestamp: new Date().toISOString() }, // Petit flag pour debug
       });
       return; // Important : on s'arrête là
     }
