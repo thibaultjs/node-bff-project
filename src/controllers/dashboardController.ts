@@ -3,6 +3,7 @@ import { getCityWeather } from "../services/weatherService";
 import { getLocalEvents } from "../services/eventService";
 import { getTrafficStatus } from "../services/trafficService";
 import { AppError } from "../utils/AppError";
+import { cacheService } from "../services/cacheService";
 
 export const getDashboardData = async (
   req: Request,
@@ -17,11 +18,18 @@ export const getDashboardData = async (
       return next(new AppError("Please provide a city in query params", 400));
     }
 
-    // --- EXEMPLE MAUVAIS (Séquentiel) ---
-    // const weather = await getCityWeather(city); // Attend 500ms
-    // const events = await getLocalEvents(city);  // Attend 800ms
-    // const traffic = await getTrafficStatus(city); // Attend 300ms
-    // Total = 1600ms !! C'est trop long.
+    // --- STRATÉGIE DE CACHE (Redis-like) ---
+    const cacheKey = `dashboard:${city.toLowerCase()}`;
+    const cachedData = cacheService.get(cacheKey);
+
+    if (cachedData) {
+      // Si trouvé en cache, on retourne la réponse tout de suite (0ms de latence API tierce)
+      res.status(200).json({
+        ...cachedData as object,
+        _metadata: { cached: true, timestamp: new Date().toISOString() } // Petit flag pour debug
+      });
+      return; // Important : on s'arrête là
+    }
 
     // --- EXEMPLE BON (Parallèle / Concurrency) ---
     // On lance les 3 promesses en même temps. Elles partent dans l'Event Loop.
@@ -56,6 +64,9 @@ export const getDashboardData = async (
         events: events.slice(0, 2), // On limite à 2 events pour le mobile
       },
     };
+
+    // On sauvegarde en cache pour 60 secondes (défaut)
+    cacheService.set(cacheKey, dashboard);
 
     res.status(200).json(dashboard);
   } catch (error) {

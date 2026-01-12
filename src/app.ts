@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import { errorHandler } from "./middlewares/errorHandler";
+import { apiLimiter } from "./middlewares/rateLimiter";
 import { AppError } from "./utils/AppError";
 import apiRoutes from "./routes/api";
 import { env } from "./config/env";
@@ -12,6 +13,7 @@ const app: Application = express();
 // Global Middlewares
 app.use(helmet());
 app.use(cors());
+app.use(apiLimiter); // Rate Limiting: 100 reqs / 15 min
 if (env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
